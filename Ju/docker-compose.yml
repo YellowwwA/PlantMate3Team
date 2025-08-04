@@ -1,0 +1,70 @@
+# version: '3.8'
+
+# services:
+#   # API Gateway
+#   api-gateway:
+#     build: ./api-gateway
+#     ports:
+#       - "3000:3000"
+#     depends_on:
+#       - image-service
+#       - timelapse-service
+#       - ai-service
+#       - sns-service
+#     environment:
+#       - NODE_ENV=development
+
+#   # Image Service
+#   image-service:
+#     build: ./services/image-service
+#     ports:
+#       - "3001:3001"
+#     volumes:
+#       - ./data/images:/app/uploads
+#     environment:
+#       - PORT=3001
+#       - UPLOAD_DIR=/app/uploads
+
+#   # Timelapse Service
+#   timelapse-service:
+#     build: ./services/timelapse-service
+#     ports:
+#       - "3002:3002"
+#     volumes:
+#       - ./data/timelapses:/app/output
+#     depends_on:
+#       - image-service
+
+#   # AI Analysis Service
+#   ai-service:
+#     build: ./services/ai-service
+#     ports:
+#       - "3003:3003"
+#     depends_on:
+#       - image-service
+
+#   # SNS Integration Service
+#   sns-service:
+#     build: ./services/sns-service
+#     ports:
+#       - "3004:3004"
+#     environment:
+#       - INSTAGRAM_APP_ID=your_instagram_app_id
+#       - INSTAGRAM_APP_SECRET=your_instagram_app_secret
+
+#   # MongoDB
+#   mongodb:
+#     image: mongo:latest
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - mongodb_data:/data/db
+
+#   # Redis (for caching)
+#   redis:
+#     image: redis:alpine
+#     ports:
+#       - "6379:6379"
+
+# volumes:
+#   mongodb_data:
