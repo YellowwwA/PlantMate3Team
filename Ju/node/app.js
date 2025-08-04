@@ -49,7 +49,7 @@ app.get(/^(?!\/api)/, (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
-// ✅ 4. 서버 시작
+// ✅ 4. 서버 시작dd
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Node 서버 실행: http://15.168.150.125:${PORT}`);
