@@ -48,3 +48,4 @@ app.get('/plant-care', async (req, res) => {
 app.listen(port, () => {
     console.log(`Node.js 서버 실행 중: http://localhost:${port}/test`);
 });
+
