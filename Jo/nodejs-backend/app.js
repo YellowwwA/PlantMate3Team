@@ -16,11 +16,6 @@ app.use('/garden', express.static(path.join(__dirname, 'client/build')));
 //     res.sendFile(path.join(__dirname, "public", "unity", "index.html"));
 // });
 
-// 루트 경로 ('/')에 대한 GET 요청을 처리하는 부분이 있는지 확인하세요.
-app.get('/', (req, res) => {
-    res.send('Hello from Node.js!'); // 또는 res.sendFile(...) 등
-});
-
 // Unity 정적 리소스 (Build 폴더) 서빙
 app.use('/garden/unity/Build', express.static(path.join(__dirname, 'client/build/unity/Build')));
 
@@ -34,6 +29,6 @@ app.get('/garden/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 
-app.listen(5000, () => {
-    console.log("✅ Server is running on http://localhost:5000/garden");
+app.listen(3000, () => {
+    console.log("✅ Server is running on http://localhost:3000/garden");
 });
