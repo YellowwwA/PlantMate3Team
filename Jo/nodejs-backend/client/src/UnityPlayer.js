@@ -1,50 +1,42 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const UnityPlayer = () => {
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
         let unityInstance = null;
-        let loginBuffer = null; // 🔹 메시지 임시 저장소
+        let loginBuffer = null;
 
-        // ✅ 1. 메시지 리스너 등록 (Unity 인스턴스 준비 전에도 수신 가능)
         window.addEventListener("message", (event) => {
-            console.log("📥 메시지 수신됨:", event);
-
             if (event.data.type === "LOGIN_INFO") {
                 const { user_id, token } = event.data;
-                console.log("📩 받은 로그인 데이터:", user_id, token);
-
-                loginBuffer = { user_id, token }; // 🔹 버퍼에 저장
-                trySendToUnity(); // 🔹 유니티가 준비되었는지 체크 후 전송
+                loginBuffer = { user_id, token };
+                trySendToUnity();
             }
         });
 
-        // 🔄 반복적으로 Unity 인스턴스 상태 확인 후 전송
         function trySendToUnity() {
             if (unityInstance && loginBuffer) {
-                console.log("🚀 유니티에 로그인 데이터 전송");
                 unityInstance.SendMessage(
                     "GameManager",
                     "ReceiveUserInfo",
                     JSON.stringify(loginBuffer)
                 );
-                loginBuffer = null; // ✅ 전송 후 버퍼 초기화
+                loginBuffer = null;
             } else {
-                console.log("⏳ 유니티 인스턴스 준비 대기 중...");
-                setTimeout(trySendToUnity, 500); // 🔁 재시도
+                setTimeout(trySendToUnity, 500);
             }
         }
 
-        // ✅ 2. 유니티 런타임 스크립트 로드
         const script = document.createElement("script");
-        script.src = "/unity/Build/unity.loader.js";
+        script.src = "/garden/unity/Build/unity.loader.js";
         script.async = true;
 
         script.onload = () => {
-
             const config = {
-                dataUrl: "/unity/Build/unity.data",
-                frameworkUrl: "/unity/Build/unity.framework.js",
-                codeUrl: "/unity/Build/unity.wasm",
+                dataUrl: "/garden/unity/Build/unity.data",
+                frameworkUrl: "/garden/unity/Build/unity.framework.js",
+                codeUrl: "/garden/unity/Build/unity.wasm",
             };
 
             const canvas = document.querySelector("#unity-canvas");
@@ -54,8 +46,8 @@ const UnityPlayer = () => {
                     .createUnityInstance(canvas, config)
                     .then((instance) => {
                         unityInstance = instance;
-                        console.log("✅ Unity 인스턴스 생성 완료");
-                        trySendToUnity(); // 🔹 Unity 준비 후 버퍼 확인
+                        setIsLoading(false);
+                        trySendToUnity();
                     })
                     .catch((err) => {
                         console.error("❌ Unity 인스턴스 생성 실패:", err);
@@ -72,29 +64,54 @@ const UnityPlayer = () => {
         };
     }, []);
 
-    // return <canvas id="unity-canvas" style={{ width: "70vw", height: "70vh" }}></canvas>;
     return (
-        <div style={{ maxWidth: "100%", margin: "0 auto", padding: "20px" }}>
-            <div
-                style={{
-                    height: "70vh",
-                    width: "calc(70vh * (16 / 9))", // 16:9 비율 맞춘 가로
-                    border: "1px solid #ccc",
-                    margin: "0 auto", // 가운데 정렬
-                }}
-            >
-                <canvas
-                    id="unity-canvas"
+        <div
+            style={{
+                height: "65vh",
+                width: "calc(65vh * (16 / 9))", // 16:9 비율 유지
+                margin: "20px auto",
+                padding: "10px",
+                borderRadius: "16px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                backgroundColor: "#fff",
+                position: "relative",
+            }}
+        >
+            {/* 🔄 로딩 오버레이 */}
+            {isLoading && (
+                <div
                     style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
                         width: "100%",
                         height: "100%",
-                        display: "block",
+                        backgroundColor: "#ffffffee",
+                        zIndex: 10,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "18px",
+                        color: "#5e865f",
+                        borderRadius: "16px",
                     }}
-                ></canvas>
-            </div>
+                >
+                    ⏳ Unity 로딩 중...
+                </div>
+            )}
+
+            {/* 🎮 Unity Canvas */}
+            <canvas
+                id="unity-canvas"
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    display: "block",
+                    borderRadius: "12px",
+                }}
+            ></canvas>
         </div>
     );
-
 };
 
 export default UnityPlayer;
